@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Plant Diagnostics</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <h1>AI Plant Diagnostics</h1>
+      <p>Advanced machine learning for plant health analysis</p>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2>Upload Analysis</h2>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept="image/*" hidden />
+          <div class="dz-inner">
+            <div class="icon">🌿</div>
+            <p><strong>Drop your plant image here</strong></p>
+            <p>Click to browse or drag &amp; drop<br/>JPG, PNG, up to 10MB</p>
+          </div>
+        </div>
+        <div class="controls">
+          <button id="btnAnalyze" class="primary">Run AI Analysis</button>
+          <button id="btnCamera" class="ghost">Use Camera</button>
+          
+        </div>
+        <div class="camera" id="camera" hidden>
+          <video id="video" autoplay playsinline></video>
+          <div class="camera-controls">
+            <button id="btnCapture" class="primary">Capture</button>
+            <button id="btnCloseCam" class="ghost">Close</button>
+          </div>
+          <canvas id="canvas" hidden></canvas>
+        </div>
+      </section>
+
+      <section class="card" id="resultsCard">
+        <div id="placeholder" class="placeholder">
+          <div class="robot">🤖</div>
+          <p>Waiting for analysis...</p>
+          <p class="muted">Upload a plant image to get started with AI diagnostics</p>
+        </div>
+        <div id="results" hidden>
+          <img id="preview" alt="preview"/>
+          <div class="result-text">
+            <h3 id="pred"></h3>
+            <p id="conf"></p>
+            <ul id="topk"></ul>
+            <h4>Diagnosis & Advice</h4>
+            <p id="diag"></p>
+            <h4>Location</h4>
+            <p id="loc"></p>
+            
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Built with Flask + TensorFlow · Demo</span>
+    </footer>
+
+    <script src="/static/main.js"></script>
+  </body>
+  </html>

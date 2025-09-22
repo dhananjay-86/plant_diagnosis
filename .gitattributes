@@ -1,0 +1,11 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Treat common data/model binaries as binary
+*.keras binary
+*.h5 binary
+*.pth binary
+*.pt binary
+*.tflite binary
+*.onnx binary
+*.pb binary

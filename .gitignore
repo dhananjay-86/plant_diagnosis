@@ -1,0 +1,28 @@
+# Virtual environments
+.venv
+.venv-tf
+venv/
+*.venv
+
+# Dataset - DO NOT UPLOAD
+PlantVillage/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+*.log
+server-log.txt
+server.log
+
+# Models: keep labels.json, ignore large weight files/exports
+models/*.keras
+models/*.h5
+models/plant_disease_model_tf_export/
+!models/labels.json
