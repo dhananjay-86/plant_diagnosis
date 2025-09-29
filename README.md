@@ -1,3 +1,7 @@
+#kaggle dataset link
+https://www.kaggle.com/datasets/arjuntejaswi/plant-village
+
+
 # AI Plant Diagnostics (Flask + TensorFlow)
 
 A web app that detects plant diseases from leaf images. Built with Flask (backend), TensorFlow/Keras (MobileNetV2 transfer learning), and a simple HTML/CSS/JS frontend. Trained on the PlantVillage dataset.
