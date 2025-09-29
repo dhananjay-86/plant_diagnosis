@@ -23,6 +23,7 @@ def create_app():
             tf_dir = os.path.join("models", "plant_disease_model_tf_export")
             tf_h5 = os.path.join("models", "plant_disease_model_tf.h5")
             tf_keras = os.path.join("models", "plant_disease_model_tf.keras")
+            torch_pth = os.path.join("models", "plant_disease_model.pth")
 
             if os.path.exists(labels_path):
                 with open(labels_path, "r", encoding="utf-8") as f:
@@ -48,6 +49,22 @@ def create_app():
                         app.last_model_load_error = str(e)
                     except Exception:
                         app.last_model_load_error = "Unknown TF load error"
+
+            # Fallback: Load PyTorch model if available
+            if app.labels is not None and os.path.exists(torch_pth):
+                try:
+                    from inference.predict import load_model as load_model_torch  # type: ignore
+                    app.model = load_model_torch(torch_pth, num_classes=len(app.labels))
+                    app.model_kind = "torch"
+                    app.last_model_load_error = None
+                    return
+                except Exception as e:
+                    app.model = None
+                    app.model_kind = None
+                    try:
+                        app.last_model_load_error = str(e)
+                    except Exception:
+                        app.last_model_load_error = "Unknown Torch load error"
 
             # No model available
             app.model = None
@@ -77,6 +94,7 @@ def create_app():
             "tf_h5": os.path.exists(os.path.join("models", "plant_disease_model_tf.h5")),
             "tf_keras": os.path.exists(os.path.join("models", "plant_disease_model_tf.keras")),
             "tf_export": os.path.exists(os.path.join("models", "plant_disease_model_tf_export")),
+            "torch_pth": os.path.exists(os.path.join("models", "plant_disease_model.pth")),
         }
         return jsonify({
             "loaded": app.model is not None,
@@ -113,8 +131,19 @@ def create_app():
                 "address": address,
             }), 503
 
-        from inference.predict_tf import predict_image_tf  # type: ignore
-        pred_idx, pred_label, confidence, topk = predict_image_tf(app.model, image, app.labels)
+        # Dispatch to the correct predictor based on the loaded model kind
+        if app.model_kind == "tf":
+            from inference.predict_tf import predict_image_tf  # type: ignore
+            pred_idx, pred_label, confidence, topk = predict_image_tf(app.model, image, app.labels)
+        elif app.model_kind == "torch":
+            from inference.predict import predict_image  # type: ignore
+            pred_idx, pred_label, confidence, topk = predict_image(app.model, image, app.labels)
+        else:
+            return jsonify({
+                "message": "Model not available yet. Train the model first.",
+                "receivedLocation": json.loads(location) if location else None,
+                "address": address,
+            }), 503
         diagnosis = diagnosis_from_label(pred_label)
 
         return jsonify({
